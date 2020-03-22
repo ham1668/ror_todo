@@ -119,3 +119,37 @@ show.html.erb - After description and before the edit blocks
 Start up rails server...
 
 Should be able to visit your todo list page, show the items...and begin adding todo items!
+
+Time to add DELETE functionality to todo items...Update the _todo_item.html.erb file to this:
+
+<p><%= todo_item.content %></p>
+<%= link_to todo_list_todo_item_path(@todo_list, todo_item.id), method: :delete, data: { confirm: "Are you sure?" } %>
+
+The lists form will now have endpoints for each todo_list item displayed. Let's change this so it will show "Delete" instead.
+
+That endpoint path is revealed because of this:
+  link_to todo_list_todo_item_path(@todo_list, todo_item.id)
+
+Change to this:
+  link_to "Delete", link_to todo_list_todo_item_path(@todo_list, todo_item.id)
+
+The _todo_item.html.erb should look like this:
+
+<p><%= todo_item.content %></p>
+<%= link_to "Delete", todo_list_todo_item_path(@todo_list, todo_item.id), method: :delete, data: { confirm: "Are you sure?" } %>
+
+At this point, the todo item form is showing the "Delete" hyperlink and it looks good now. Clicking the "Delete" button will pop up that confirmation message...and if you confirm, it will result in error.
+
+The action destroy could not be found for TodoItemsController...so we have to go there and fix that.
+
+Go to the todo_items_controller.rb file in app/controllers and add the destroy method:
+
+def destroy
+ @todo_item = @todo_list.todo_items.find(params[:id])
+ if @todo_item.destroy
+  flash[:success] = "Todo List item was deleted."
+ else
+  flash[:error] = "Todo List item could not be deleted."
+ end
+ redirect_to @todo_list 
+end
