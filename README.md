@@ -249,3 +249,10 @@ Next, the todo_item.rb model will be modified to define this ".completed?" metho
 In the model, we're saying that .completed? will return boolean of the completed_at field is not blank. If it is not blank, True is returned. Otherwise, False is returned.
 
 Now when I refresh my list of todo items, I can see that "Watch a video" is struck through!
+
+At this point, the tutorial focuses on styling the look and feel...
+
+The app/assets/stylesheets/application.css file is renamed to application.css.scss.
+
+Lots is copied from https://github.com/mackenziechild/Todo-App/blob/master/app/assets/stylesheets/application.css.scss
+
