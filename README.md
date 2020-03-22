@@ -153,3 +153,99 @@ def destroy
  end
  redirect_to @todo_list 
 end
+
+Now we can delete todo items!
+
+The next thing to implement will be a way to mark a todo item as completed. I need to add a new column to the database:
+
+rails generate migration add_completed_at_to_todo_items completed_at:datetime
+or
+rails g migration add_completed_at_to_todo_items completed_at:datetime
+
+This creates a new migration in the db/migration directory.
+It knows that this is an extra column to be added to the todo_items table.
+
+HOW?
+
+Seems like rails convention is to create a migration name that is literally what is to be done.
+
+In this case, the "add_completed_at_to_todo_items" migration name literally means..."add" a column named "completed_to" to the "todo_items" table. The singular column is described in the command...so that's what is used in the migration.
+
+More columns can be added too! The name can be slimmed down to just "add_columns_to_todo_items" for example...and specify the various columns afterwards...OR...you can open the migration file before it has been applied, and add the columns there. This "rails generate migration" command is just to generate the migration template file for you...and if it is easier to just modify that resulting file...at least it is there for you.
+
+Run the rake db:migration to get this column added. The original migration that created the "todo_items" table cannot be modified at this point because it has already been run.
+
+With the new field added to the todo_items table, now it is time to add a route. In the app/config/routes.rb file, modify the :todo_lists resources block:
+
+  resources :todo_lists do
+  	resources :todo_items do
+  	  member do
+  	  	patch :complete
+  	  end
+  	end
+  end
+
+A link needs to be added to the end of the _todo_item.html.erb partial. It would look like this:
+
+<%= link_to "Mark as Complete", complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch %>
+
+So we've handled the data model to have this completed_at column. The view now has a "Mark as Completed" link for each todo item. The last bit is to modify the todo_items_controller.rb.
+
+The tutorial calls out a private method, a before action, and a complete method.
+
+The private method looks like this:
+
+def set_todo_item
+  @todo_item = @todo_list.todo_items.find(params[:id])
+end
+
+The before_action bit looks like this:
+
+before_action :set_todo_item, except: [:create]
+
+The complete method part looks like this:
+
+def complete
+  @todo_item.update_attribute(:completed_at, Time.now)
+  redirect_to @todo_list, notice: "Todo item completed"
+end
+
+At this point, the author has us test the "Mark as Complete" link. Not much happens besides the text at the top of the page proclaiming "Todo item completed".
+
+So now, we're going to work on something else happening on the view. The _todo_item.html.erb file will be modified.
+
+A conditional is added so that if the todo item is completed...that it will be displayed with strikethrough.
+
+<div class="row clearfix">
+ <% if todo_item.completed? %>
+  <div class="complete">
+   <%= link_to "Mark as Complete", complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch %>
+  </div>
+  <div class="todo_item">
+   <p style="opacity: 0.4;"><strike><%= todo_item.content %></strike></p>
+  </div>
+  <div class="trash">
+   <%= link_to "Delete", todo_list_todo_item_path(@todo_list, todo_item.id), method: :delete, data: { confirm: "Are you sure?" } %>
+  </div>
+ <% else %>
+  <div class="complete">
+   <%= link_to "Mark as Complete", complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch %>
+  </div>
+  <div class="todo_item">
+   <p><%= todo_item.content %></p>
+  </div>
+  <div class="trash">
+   <%= link_to "Delete", todo_list_todo_item_path(@todo_list, todo_item.id), method: :delete, data: { confirm: "Are you sure?" } %>
+  </div>
+ <% end %>
+</div>
+
+Next, the todo_item.rb model will be modified to define this ".completed?" method mentioned in the if statement above.
+
+  def completed?
+  	!completed_at.blank?
+  end
+
+In the model, we're saying that .completed? will return boolean of the completed_at field is not blank. If it is not blank, True is returned. Otherwise, False is returned.
+
+Now when I refresh my list of todo items, I can see that "Watch a video" is struck through!
