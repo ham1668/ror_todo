@@ -256,3 +256,67 @@ The app/assets/stylesheets/application.css file is renamed to application.css.sc
 
 Lots is copied from https://github.com/mackenziechild/Todo-App/blob/master/app/assets/stylesheets/application.css.scss
 
+After this, the author makes change to application.html.erb file under views/layouts. The <%= yield %> is moved to a container.
+
+  <body>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+
+Next, change happens to the index file... app/views/todo_lists/index.html.erb:
+
+<% @todo_lists.each do |todo_list| %>
+<div class="index_row clearfix">
+  <h2 class="todo_list_title"><%= link_to todo_list.title, todo_list %></h2>
+  <p class="todo_list_sub_title"><%= todo_list.description %></p>
+</div>
+<% end %>
+<div class="links">
+  <%= link_to "New Todo List", new_todo_list_path %>
+</div>
+
+All other code in the file is commented out!
+
+Refreshing the page shows some scrunched up text...doesn't look so great.
+
+To fix this situation...
+
+application.css.scss changes
+The fontsize is reduced to 1.0 from 2.5:
+
+	font-size: 1.0rem;
+
+So now the text in the Todo list page looks better. The actual todo items page looks not so nice.
+
+Going to borrow from another project again for the application.html.erb file. Should look like this:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+	<%= yield %>
+</div>
+
+</body>
+</html>
+
+There is still more work to do...the hyperlinks now look a little different. The next step in the instructions is to replace the "Mark as Complete" hyperlink with an icon from font-awesome in the _todo_item.html.erb file:
+
+Replacing this:
+   <%= link_to "Mark as Complete", complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch %>
+
+With this:
+   <%= link_to complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch do %>
+    <i style="opacity: 0.4;" class="fa fa-check"></i>
+
+Now, the todo items list will show a check mark when a task item is completed!
