@@ -345,3 +345,39 @@ To clean up the "Edit/Back" links...add the bottom two lines into a "links" div:
  <%= link_to 'Back', todo_lists_path %>
 </div>
 
+Added a "Delete" button to the links div as well. It should look like this now:
+
+<div class="links">
+ <%= link_to 'Edit', edit_todo_list_path(@todo_list) %> |
+ <%= link_to 'Delete', todo_list_path(@todo_list), method: :delete, data: { confirm: "Are you sure about this?" } %> |
+ <%= link_to 'Back', todo_lists_path %>
+</div>
+
+The todo_lists_controller.rb needs to be modified to fix the destroy method. The current code will redirect to the todo lists url which is not where we want to be. We want to be redirected to the root url like this:
+
+      format.html { redirect_to root_url, notice: 'Todo list was successfully destroyed.' }
+
+Modified the new.html.erb file:
+
+<h1 class="todo_list_title">New Todo List</h1>
+
+<div class="forms">
+<%= render 'form', todo_list: @todo_list %>
+</div>
+
+<div class="links">
+<%= link_to 'Back', todo_lists_path %>
+</div>
+
+Same sort of change to the edit.html.erb file too. The "Show" link has been removed as well. That file would look like this now:
+
+<h1 class="todo_list_title">Editing Todo List</h1>
+
+<div class="forms">
+<%= render 'form', todo_list: @todo_list %>
+</div>
+
+<div class="links">
+<%= link_to 'Cancel', todo_lists_path %>
+</div>
+
