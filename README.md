@@ -320,3 +320,15 @@ With this:
     <i style="opacity: 0.4;" class="fa fa-check"></i>
 
 Now, the todo items list will show a check mark when a task item is completed!
+
+But wait! There's more...
+
+The author decides to replace more links with Font Awesome icons! Going back to the _todo_item.html.erb file. Replacing the "Mark as Complete" bit with the following:
+
+   <%= link_to complete_todo_list_todo_item_path(@todo_list, todo_item.id), method: :patch do %>
+    <i class="fa fa-circle-thin"></i>
+   <% end %>   
+
+Circles are used now instead of the text link.
+
+Next is the "Delete" links...author to replace with trash icon:
