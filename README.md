@@ -332,3 +332,16 @@ The author decides to replace more links with Font Awesome icons! Going back to 
 Circles are used now instead of the text link.
 
 Next is the "Delete" links...author to replace with trash icon:
+
+In the show.html.erb...replace the current title and description stuff with this:
+
+<h2 class="todo_list_title"><%= @todo_list.title %></h2>
+<p class="todo_list_sub_title"><%= @todo_list.description %></p>
+
+To clean up the "Edit/Back" links...add the bottom two lines into a "links" div:
+
+<div class="links">
+ <%= link_to 'Edit', edit_todo_list_path(@todo_list) %> |
+ <%= link_to 'Back', todo_lists_path %>
+</div>
+
